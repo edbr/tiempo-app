@@ -1,7 +1,7 @@
 // components/WeatherCard.tsx
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { WeatherData } from "@/lib/weather";
-import { CloudSunIcon } from "./Icons";
+// import { CloudSunIcon } from "./Icons";
 
 export function WeatherCard({ data }: { data: WeatherData }) {
   return (

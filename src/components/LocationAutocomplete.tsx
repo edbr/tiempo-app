@@ -3,14 +3,13 @@
 /// <reference types="@types/google.maps" />
 
 import { useEffect, useRef } from "react";
-import { Input } from "@/components/ui/input";
 
 type Props = {
   onSelect: (place: google.maps.places.PlaceResult) => void;
 };
 
 export function LocationAutocomplete({ onSelect }: Props) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function init() {
@@ -21,38 +20,34 @@ export function LocationAutocomplete({ onSelect }: Props) {
       });
 
       await loader.load();
-      createAutocomplete();
-    }
 
-    function createAutocomplete() {
-      if (!inputRef.current) return;
+      // ✅ Import new Places library
+      const { PlaceAutocompleteElement } = (await google.maps.importLibrary(
+        "places"
+      )) as google.maps.PlacesLibrary;
 
-      const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-        types: ["(cities)"], // or ["geocode"] for full addresses
-        fields: ["geometry", "name", "formatted_address"],
+      // ✅ Create new Autocomplete element
+      const autocomplete = new PlaceAutocompleteElement({
+        placeholder: "Enter a city",
+        componentRestrictions: { country: ["us"] }, // optional
       });
 
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        if (place.geometry) onSelect(place);
+      // ✅ Listen for place changes
+      autocomplete.addEventListener("gmp-placechange", (e: Event) => {
+        const customEvent = e as CustomEvent<{ place: google.maps.places.PlaceResult }>;
+        const place = customEvent.detail.place;
+        if (place) onSelect(place);
       });
-    }
 
-    init().catch((error: unknown) => {
-      if (error instanceof Error) {
-        console.error("Autocomplete init error:", error.message);
-      } else {
-        console.error("Unknown error initializing autocomplete");
+      // ✅ Mount into container
+      if (containerRef.current) {
+        containerRef.current.innerHTML = ""; // clear previous
+        containerRef.current.appendChild(autocomplete);
       }
-    });
+    }
+
+    init().catch((err) => console.error("Autocomplete init error:", err));
   }, [onSelect]);
 
-  return (
-    <Input
-      ref={inputRef}
-      placeholder="Enter a location"
-      className="w-full"
-      type="text"
-    />
-  );
+  return <div ref={containerRef} className="w-full" />;
 }
