@@ -30,8 +30,10 @@ export function WeatherForm({ onResult, onError }: WeatherFormProps) {
               pos.coords.longitude
             );
             onResult(data);
-          } catch (err: any) {
-            onError(err.message);
+          } catch (err) {
+            const message =
+              err instanceof Error ? err.message : "Failed to fetch weather";
+            onError(message);
           } finally {
             setLoading(false);
           }
@@ -72,8 +74,10 @@ export function WeatherForm({ onResult, onError }: WeatherFormProps) {
             setLoading(true);
             const data = await getWeather(lat, lon);
             onResult(data);
-          } catch (err: any) {
-            onError(err.message);
+          } catch (err) {
+            const message =
+              err instanceof Error ? err.message : "Failed to fetch weather";
+            onError(message);
           } finally {
             setLoading(false);
           }
@@ -83,7 +87,9 @@ export function WeatherForm({ onResult, onError }: WeatherFormProps) {
       setAutocomplete(autocompleteObj);
     }
 
-    init();
+    init().catch((error) => {
+      console.error("Failed to initialize autocomplete:", error);
+    });
   }, [onResult, onError]);
 
   return (
