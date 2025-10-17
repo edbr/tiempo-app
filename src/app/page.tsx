@@ -21,6 +21,19 @@ export default function Page() {
           </p>
         )}
       </div>
+      <div className="mt-8 text-center text-xs text-gray-500">
+        <p>
+          Data provided by{" "}
+          <a
+            href="https://openweathermap.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            OpenWeather
+          </a>
+        </p>
+      </div>
     </main>
   );
 }
