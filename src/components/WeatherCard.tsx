@@ -51,7 +51,7 @@ export function WeatherCard({ data }: Props) {
         </div>
 
         <div className="flex flex-col">
-          <span className="text-gray-500">Wind Speed</span>
+          <span className="text-gray-400">Wind Speed</span>
           <span className="font-medium">{data.windSpeed} m/s</span>
         </div>
 
