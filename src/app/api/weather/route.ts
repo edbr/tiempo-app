@@ -58,25 +58,20 @@ export async function GET(req: Request) {
     /* ------------------------------------------------------------
        3. Unified response
     ------------------------------------------------------------ */
-    return NextResponse.json({
-      city: data.name,
-      temp: Math.round(data.main.temp),
-      condition: data.weather[0].description,
-      icon: data.weather[0].icon,
+return NextResponse.json({
+  name: data.name,
+  lat: Number(lat),
+  lon: Number(lon),
 
-      // richer weather data
-      temperature: data.main.temp,
-      description: data.weather[0].description,
-      humidity: data.main.humidity,
-      windSpeed: data.wind.speed,
+  temperature: data.main.temp,
+  description: data.weather[0].description,
+  icon: data.weather[0].icon,
 
-      // coordinates
-      lat: Number(lat),
-      lon: Number(lon),
+  humidity: data.main.humidity,
+  windSpeed: data.wind.speed,
+  elevation,
+});
 
-      // new field
-      elevation,
-    });
   } catch (err) {
     console.error("Server error:", err);
     return NextResponse.json({ error: String(err) }, { status: 500 });

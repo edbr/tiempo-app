@@ -1,17 +1,18 @@
 export type WeatherData = {
-  city: string;
-  temp: number;
-  condition: string;
-  icon: string;
-  name: string;
-  temperature: number;
-  description: string;
-  humidity: number;
-  windSpeed: number;
+  name: string;          // "Truckee, CA"
   lat: number;
   lon: number;
-  elevation?: number;
+
+  temperature: number;   // °C or °F
+  description: string;   // "Clear sky"
+  icon: string;          // icon code or URL
+
+  humidity: number;      // %
+  windSpeed: number;     // m/s or km/h
+
+  elevation?: number |null;  // meters
 };
+
 
 export type ForecastDay = {
   date: number;

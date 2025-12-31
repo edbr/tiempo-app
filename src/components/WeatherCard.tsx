@@ -10,11 +10,12 @@ export function WeatherCard({ data }: Props) {
     <div className="weather-card">
       {/* Location */}
       <div className="weather-card__location">
-        <h2 className="weather-card__city">{data.city}</h2>
+        <h2 className="weather-card__city">{data.name}</h2>
         <p className="weather-card__meta">
           Lat {data.lat.toFixed(3)}, Lon {data.lon.toFixed(3)}
         </p>
-        {data.elevation !== undefined && (
+
+        {data.elevation != null && (
           <p className="weather-card__meta">
             Elevation: {data.elevation.toLocaleString()} m
           </p>
@@ -54,13 +55,8 @@ export function WeatherCard({ data }: Props) {
         <div className="weather-card__detail">
           <span className="weather-card__label">Condition</span>
           <span className="weather-card__value capitalize">
-            {data.condition}
+            {data.description}
           </span>
-        </div>
-
-        <div className="weather-card__detail">
-          <span className="weather-card__label">Raw Temp</span>
-          <span className="weather-card__value">{data.temp}°C</span>
         </div>
       </div>
 

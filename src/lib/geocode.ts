@@ -1,29 +1,31 @@
-export type GeocodeResult = {
-  name: string;
+export type GeoResult = {
   lat: number;
   lon: number;
-  country: string;
-  state?: string;
+  name: string;
 };
 
-export async function geocodeCity(city: string): Promise<GeocodeResult> {
-  const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+export async function geocodeCity(query: string): Promise<GeoResult> {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+    query
+  )}`;
 
-  const res = await fetch(
-    `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
-      city
-    )}&limit=1&appid=${apiKey}`
-  );
+  const res = await fetch(url, {
+    headers: { "User-Agent": "weather-app" },
+  });
 
   if (!res.ok) {
     throw new Error("Geocoding failed");
   }
 
-  const data = (await res.json()) as GeocodeResult[];
+  const data = await res.json();
 
   if (!data.length) {
-    throw new Error("City not found");
+    throw new Error("Location not found");
   }
 
-  return data[0];
+  return {
+    lat: Number(data[0].lat),
+    lon: Number(data[0].lon),
+    name: data[0].display_name,
+  };
 }
