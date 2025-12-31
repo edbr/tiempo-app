@@ -5,7 +5,7 @@ export async function GET(req: Request) {
   const lat = searchParams.get("lat");
   const lon = searchParams.get("lon");
 
-  console.log("API called with:", { lat, lon }); // ✅ check inputs
+  console.log("API called with:", { lat, lon });
 
   if (!lat || !lon) {
     return NextResponse.json({ error: "Missing coordinates" }, { status: 400 });
@@ -19,26 +19,63 @@ export async function GET(req: Request) {
   }
 
   try {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-    console.log("Fetching:", url);
+    /* ------------------------------------------------------------
+       1. Fetch weather
+    ------------------------------------------------------------ */
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    console.log("Fetching weather:", weatherUrl);
 
-    const res = await fetch(url);
-    console.log("OpenWeather response status:", res.status);
+    const weatherRes = await fetch(weatherUrl);
+    console.log("OpenWeather response status:", weatherRes.status);
 
-    if (!res.ok) {
-      const msg = await res.text();
+    if (!weatherRes.ok) {
+      const msg = await weatherRes.text();
       console.error("OpenWeather error:", msg);
-      return NextResponse.json({ error: msg }, { status: res.status });
+      return NextResponse.json({ error: msg }, { status: weatherRes.status });
     }
 
-    const data = await res.json();
+    const data = await weatherRes.json();
     console.log("OpenWeather success:", data.name);
 
+    /* ------------------------------------------------------------
+       2. Fetch elevation (Open-Meteo)
+    ------------------------------------------------------------ */
+    let elevation: number | null = null;
+
+    try {
+      const elevUrl = `https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lon}`;
+      console.log("Fetching elevation:", elevUrl);
+
+      const elevRes = await fetch(elevUrl);
+      const elevData = await elevRes.json();
+
+      elevation = elevData.elevation ?? null;
+      console.log("Elevation:", elevation);
+    } catch (e) {
+      console.warn("Elevation fetch failed:", e);
+    }
+
+    /* ------------------------------------------------------------
+       3. Unified response
+    ------------------------------------------------------------ */
     return NextResponse.json({
       city: data.name,
       temp: Math.round(data.main.temp),
       condition: data.weather[0].description,
       icon: data.weather[0].icon,
+
+      // richer weather data
+      temperature: data.main.temp,
+      description: data.weather[0].description,
+      humidity: data.main.humidity,
+      windSpeed: data.wind.speed,
+
+      // coordinates
+      lat: Number(lat),
+      lon: Number(lon),
+
+      // new field
+      elevation,
     });
   } catch (err) {
     console.error("Server error:", err);
