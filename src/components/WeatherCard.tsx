@@ -56,7 +56,7 @@ export function WeatherCard({ data }: Props) {
         </div>
 
         <div className="flex flex-col">
-          <span className="text-gray-500">Condition</span>
+          <span className="text-gray-600">Condition</span>
           <span className="font-medium capitalize">{data.condition}</span>
         </div>
 
