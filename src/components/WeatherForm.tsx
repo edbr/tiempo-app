@@ -19,10 +19,7 @@ export function WeatherForm({ onResult, onError }: Props) {
 
     try {
       setLoading(true);
-
-      // geocodeCity returns a single object, not an array
       const { lat, lon } = await geocodeCity(query);
-
       const weather = await getWeather(lat, lon);
       onResult(weather);
     } catch (err) {
@@ -34,37 +31,39 @@ export function WeatherForm({ onResult, onError }: Props) {
     }
   }
 
-  return (
-    <div className="weather-form">
-      <Input
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            submit();
-          }
-        }}
-        placeholder="Enter a city (e.g. Truckee, CA)"
-        disabled={loading}
-        className="weather-form__input"
-      />
+return (
+  <div className="weather-form">
+    <div className="weather-form__inner">
+      <div className="weather-form__input-wrap">
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              submit();
+            }
+          }}
+          placeholder="Enter a city (e.g. Truckee, CA)"
+          disabled={loading}
+          className="weather-form__input"
+        />
+      </div>
 
       <button
         type="button"
         onClick={submit}
         disabled={loading || !query}
-        aria-label="Search (Enter)"
+        aria-label="Search"
         className="weather-form__submit"
       >
         ↵
       </button>
-
-      {loading && (
-        <p className="weather-form__loading">
-          Loading…
-        </p>
-      )}
     </div>
-  );
+
+    {loading && (
+      <p className="weather-form__loading">Loading…</p>
+    )}
+  </div>
+);
 }
