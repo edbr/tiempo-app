@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { WeatherForm } from "@/components/WeatherForm";
 import { WeatherCard } from "@/components/WeatherCard";
 import { ForecastList } from "@/components/ForecastList";
@@ -31,6 +31,34 @@ export default function Page() {
       setForecast(null);
     }
   }
+// Pucón, Chile
+const PUCON = {
+  lat: -39.2823,
+  lon: -71.9543,
+};
+
+  useEffect(() => {
+  async function loadPucon() {
+    try {
+      setHasSearched(true);
+
+      const weatherRes = await fetch(
+        `/api/weather?lat=${PUCON.lat}&lon=${PUCON.lon}`
+      );
+
+      if (!weatherRes.ok) throw new Error("Failed to load default location");
+
+      const weatherData: WeatherData = await weatherRes.json();
+
+      await handleWeatherResult(weatherData);
+    } catch {
+      setError("Unable to load default location weather.");
+    }
+  }
+
+  loadPucon();
+}, []);
+
 
   return (
     <main className="page-weather">
