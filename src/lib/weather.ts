@@ -1,17 +1,38 @@
 export type WeatherData = {
-  name: string;          // "Truckee, CA"
+  // Location
+  name: string;
+  country?: string;
   lat: number;
   lon: number;
 
-  temperature: number;   // °C or °F
-  description: string;   // "Clear sky"
-  icon: string;          // icon code or URL
+  // Temperature & atmosphere
+  temperature: number;
+  feelsLike?: number;
+  humidity: number;
+  pressure?: number;
 
-  humidity: number;      // %
-  windSpeed: number;     // m/s or km/h
+  // Wind
+  windSpeed: number;
+  windDeg?: number;
 
-  elevation?: number |null;  // meters
+  // Precipitation & clouds
+  rain1h?: number;
+  cloudCover?: number;
+
+  // Time & sun (UTC timestamps + timezone offset)
+  dt?: number;
+  timezone?: number;
+  sunrise?: number;
+  sunset?: number;
+
+  // Visuals
+  description: string;
+  icon: string;
+
+  // Optional enrichment
+  elevation?: number | null;
 };
+
 
 
 export type ForecastDay = {
