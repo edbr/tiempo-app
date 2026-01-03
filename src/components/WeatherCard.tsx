@@ -8,31 +8,36 @@ type Props = {
 /* ============================================================
    TIME HELPERS (OpenWeather timestamps are UTC)
 ============================================================ */
-function formatTime(
+function formatTimeUTC(
   timestamp: number,
   timezoneOffset: number
 ) {
   return new Date(
     (timestamp + timezoneOffset) * 1000
-  ).toLocaleTimeString([], {
+  ).toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "UTC",
   });
 }
 
-function formatLocalTime(
+function formatLocalDateTimeUTC(
   timestamp: number,
   timezoneOffset: number
 ) {
   return new Date(
     (timestamp + timezoneOffset) * 1000
-  ).toLocaleString([], {
+  ).toLocaleString("en-US", {
     weekday: "short",
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "UTC",
   });
 }
 
+/* ============================================================
+   COUNTRY NAME
+============================================================ */
 const countryNames = new Intl.DisplayNames(["en"], {
   type: "region",
 });
@@ -41,7 +46,6 @@ function getCountryName(code?: string) {
   if (!code) return null;
   return countryNames.of(code);
 }
-
 
 export function WeatherCard({ data }: Props) {
   return (
@@ -52,22 +56,21 @@ export function WeatherCard({ data }: Props) {
       <div className="weather-card__location">
         <div className="flex items-center gap-2">
           <h2 className="weather-card__city">
-            {data.name},
-
-                    {data.country && (
-            <span className="ml-2 text-muted-foreground text-base">
-              {getCountryName(data.country)}
-            </span>
-          )}
+            {data.name}
+            {data.country && (
+              <span className="ml-2 text-muted-foreground text-base">
+                {getCountryName(data.country)}
+              </span>
+            )}
           </h2>
-          {/* Country flag (guarded) */}
+
           {data.country && (
             <Image
               src={`https://flagcdn.com/w20/${data.country.toLowerCase()}.png`}
-              alt={`${data.country} flag`}
+              alt={`${getCountryName(data.country)} flag`}
               width={20}
               height={15}
-              className="border-sm"
+              className="border border-border"
             />
           )}
         </div>
@@ -91,7 +94,7 @@ export function WeatherCard({ data }: Props) {
           <p className="weather-card__meta">
             Local time:{" "}
             <strong>
-              {formatLocalTime(data.dt, data.timezone)}
+              {formatLocalDateTimeUTC(data.dt, data.timezone)}
             </strong>
           </p>
 
@@ -101,7 +104,7 @@ export function WeatherCard({ data }: Props) {
                 <>
                   Sunrise{" "}
                   <strong>
-                    {formatTime(data.sunrise, data.timezone)}
+                    {formatTimeUTC(data.sunrise, data.timezone)}
                   </strong>
                 </>
               )}
@@ -112,7 +115,7 @@ export function WeatherCard({ data }: Props) {
                 <>
                   Sunset{" "}
                   <strong>
-                    {formatTime(data.sunset, data.timezone)}
+                    {formatTimeUTC(data.sunset, data.timezone)}
                   </strong>
                 </>
               )}
