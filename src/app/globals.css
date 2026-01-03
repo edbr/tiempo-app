@@ -248,3 +248,7 @@
   border: 1px solid var(--border);
   box-shadow: 0 12px 32px oklch(0 0 0 / 8%);
 }
+
+.weather-icon {
+  filter: saturate(10.1) contrast(1.05);
+}
